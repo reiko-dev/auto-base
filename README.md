@@ -13,9 +13,9 @@ Serviço **Perfil público básico** da [AKRY Solutions](http://www.akrysolution
 - Ligar, Salvar contato (.vcf) e Compartilhar
 - Horário da semana, endereço, WhatsApp, Instagram e CNPJ
 - Prévia de link (WhatsApp/Instagram) e dados estruturados para o Google
+- **Avaliar no Google**: abre direto a janela de avaliação da ficha da loja no Google Maps
 
-Blocos opcionais que aparecem sozinhos quando preenchidos: **Avaliar no Google** (precisa do Place ID),
-**Serviços e preços** e **Links**.
+Blocos opcionais que aparecem sozinhos quando preenchidos: **Serviços e preços** e **Links**.
 
 ## Onde mudar os dados
 
@@ -65,6 +65,7 @@ Depois de testar, deixe a tag **somente leitura** para ninguém regravar.
 
 - [ ] Horário de sábado (hoje aparece "Consulte pelo WhatsApp")
 - [ ] Tabela de preços (`services`)
-- [ ] Perfil da loja no Google Maps / Place ID (habilita "Avaliar no Google")
+- [x] Place ID do Google Maps (ficha "Lava jato e conveniência da base") — botão "Avaliar no Google" ativo
+- [ ] Ficha do Google: nome, bairro e horário diferentes dos informados pelo cliente
 - [ ] CEP e razão social (opcionais)
 - [ ] Endereço definitivo da página antes de gravar o NFC

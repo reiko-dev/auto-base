@@ -41,8 +41,9 @@ export const profile: Profile = {
     district: 'Base',
     city: 'Rio Branco',
     state: 'AC',
-    // TODO: a Auto Base não foi encontrada no Google Maps. Com o Place ID, o botão "Avaliar no Google" aparece.
-    googlePlaceId: undefined,
+    // Ficha no Google Maps: "Lava jato e conveniência da base" (mesmo endereço e telefone).
+    // Habilita o botão "Avaliar no Google" e deixa "Como chegar" apontando para o local exato.
+    googlePlaceId: 'ChIJoQyd72CNf5ER_YQ6W_ScLpI',
   },
 
   hours: {

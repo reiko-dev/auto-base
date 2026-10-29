@@ -18,14 +18,16 @@ interface Props {
   /** Abre em nova aba (links externos). */
   external?: boolean;
   onClick?: () => void;
+  /** Classes extras para o ícone (ex.: estrela dourada). */
+  iconClassName?: string;
 }
 
-export function ActionButton({ icon: Icon, label, variant = 'glass', size = 'md', href, external, onClick }: Props) {
+export function ActionButton({ icon: Icon, label, variant = 'glass', size = 'md', href, external, onClick, iconClassName = '' }: Props) {
   const sizing = size === 'lg' ? 'min-h-14 text-[17px] font-bold' : 'min-h-12 text-[15px] font-semibold';
   const classes = `flex h-full items-center justify-center gap-2.5 rounded-2xl px-3 text-center transition active:scale-[0.98] hover:brightness-110 ${sizing} ${VARIANTS[variant]}`;
   const content = (
     <>
-      <Icon aria-hidden className={size === 'lg' ? 'size-6 shrink-0' : 'size-5 shrink-0'} strokeWidth={2} />
+      <Icon aria-hidden className={`${size === 'lg' ? 'size-6' : 'size-5'} shrink-0 ${iconClassName}`} strokeWidth={2} />
       {label}
     </>
   );

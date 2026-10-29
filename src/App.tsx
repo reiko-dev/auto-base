@@ -45,7 +45,14 @@ export default function App() {
     ),
     contact.instagram && <ActionButton key="ig" icon={Camera} label="Instagram" href={instagramUrl(contact.instagram)} external />,
     location?.googlePlaceId && (
-      <ActionButton key="review" icon={Star} label="Avaliar no Google" href={reviewUrl(location.googlePlaceId)} external />
+      <ActionButton
+        key="review"
+        icon={Star}
+        iconClassName="fill-amber-300 text-amber-300 drop-shadow-[0_0_6px_rgba(252,211,77,0.6)]"
+        label="Avaliar no Google"
+        href={reviewUrl(location.googlePlaceId)}
+        external
+      />
     ),
   ].filter(Boolean);
 
