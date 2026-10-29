@@ -78,6 +78,42 @@ export function describeDay(hours: Hours, day: Weekday): string {
   return hours.notes?.[day] ?? 'Fechado';
 }
 
+export interface WeekGroup {
+  days: Weekday[];
+  /** Ex.: "Domingo a sexta", "Sábado e domingo", "Todos os dias" */
+  label: string;
+  value: string;
+}
+
+/**
+ * Junta dias seguidos com o mesmo horário ("Domingo a sexta: 7h40 – 18h").
+ * Testa a semana começando no domingo e na segunda e fica com a que gera menos linhas.
+ */
+export function summarizeWeek(hours: Hours): WeekGroup[] {
+  const group = (order: Weekday[]) => {
+    const groups: { days: Weekday[]; value: string }[] = [];
+    for (const day of order) {
+      const value = describeDay(hours, day);
+      const last = groups[groups.length - 1];
+      if (last && last.value === value) last.days.push(day);
+      else groups.push({ days: [day], value });
+    }
+    return groups;
+  };
+  const mondayFirst = group(WEEK_ORDER);
+  const sundayFirst = group([0, 1, 2, 3, 4, 5, 6]);
+  const best = sundayFirst.length < mondayFirst.length ? sundayFirst : mondayFirst;
+  return best.map((g) => ({ ...g, label: rangeLabel(g.days) }));
+}
+
+function rangeLabel(days: Weekday[]): string {
+  if (days.length === 7) return 'Todos os dias';
+  const first = DAY_LABELS[days[0]];
+  if (days.length === 1) return first;
+  const last = DAY_NAMES[days[days.length - 1]];
+  return days.length === 2 ? `${first} e ${last}` : `${first} a ${last}`;
+}
+
 function lowerFirst(text: string): string {
   return text.charAt(0).toLowerCase() + text.slice(1);
 }

@@ -4,10 +4,10 @@ import { getOpenStatus, type OpenState } from '../lib/hours';
 
 const BASE = import.meta.env.BASE_URL;
 
-const STATUS_STYLE: Record<OpenState, string> = {
-  open: 'bg-emerald-400/15 text-emerald-200 [&>i]:bg-emerald-400',
-  closed: 'bg-rose-400/15 text-rose-200 [&>i]:bg-rose-400',
-  unknown: 'bg-amber-300/15 text-amber-100 [&>i]:bg-amber-300',
+const STATUS_STYLE: Record<OpenState, { pill: string; head: string; dot: string }> = {
+  open: { pill: 'border-emerald-400/60 bg-emerald-500/10', head: 'text-emerald-300', dot: 'bg-emerald-400 shadow-[0_0_8px_#34d399]' },
+  closed: { pill: 'border-rose-400/50 bg-rose-500/10', head: 'text-rose-300', dot: 'bg-rose-400' },
+  unknown: { pill: 'border-amber-300/50 bg-amber-400/10', head: 'text-amber-200', dot: 'bg-amber-300' },
 };
 
 function useNow(intervalMs = 30_000) {
@@ -23,10 +23,16 @@ function OpenStatusPill() {
   const now = useNow();
   if (!profile.hours) return null;
   const status = getOpenStatus(profile.hours, profile.timezone, now);
+  const style = STATUS_STYLE[status.state];
+  // "Aberto agora · fecha às 18h" → primeira parte colorida, resto em branco.
+  const [head, ...rest] = status.label.split(' · ');
   return (
-    <p className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold ${STATUS_STYLE[status.state]}`}>
-      <i aria-hidden className="size-2 rounded-full" />
-      {status.label}
+    <p className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${style.pill}`}>
+      <i aria-hidden className={`size-2.5 shrink-0 rounded-full ${style.dot}`} />
+      <span>
+        <span className={`font-semibold ${style.head}`}>{head}</span>
+        {rest.length > 0 && <span className="text-white"> · {rest.join(' · ')}</span>}
+      </span>
     </p>
   );
 }
@@ -34,7 +40,7 @@ function OpenStatusPill() {
 export function Hero() {
   const { images } = profile;
   return (
-    <header className="md:px-4">
+    <header>
       {images.cover && (
         <img
           src={BASE + images.cover}
@@ -42,16 +48,15 @@ export function Hero() {
           width={960}
           height={463}
           fetchPriority="high"
-          className="block h-auto w-full md:rounded-3xl"
+          // A base da capa se dissolve no fundo da página.
+          className="block h-auto w-full [mask-image:linear-gradient(to_bottom,black_86%,transparent)]"
         />
       )}
-      <div className={`relative px-4 md:px-0 ${images.cover ? 'mt-3' : 'pt-8'}`}>
-        <div className="card">
-          <p className="text-xs font-bold tracking-[0.18em] text-accent uppercase">{profile.category}</p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-white">{profile.name}</h1>
-          {profile.tagline && <p className="mt-1 text-[15px] text-slate-300">{profile.tagline}</p>}
-          <OpenStatusPill />
-        </div>
+      <div className={`px-5 ${images.cover ? 'pt-2' : 'pt-10'}`}>
+        <p className="text-xs font-semibold tracking-[0.28em] text-slate-300 uppercase">{profile.category}</p>
+        <h1 className="mt-1 font-display text-[36px] leading-[1.05] font-extrabold tracking-tight text-white">{profile.name}</h1>
+        {profile.tagline && <p className="mt-1.5 text-base leading-snug text-slate-300">{profile.tagline}</p>}
+        <OpenStatusPill />
       </div>
     </header>
   );

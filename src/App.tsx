@@ -1,4 +1,4 @@
-import { AtSign, MessageCircle, Navigation, Phone, QrCode, Share2, Star, UserPlus } from 'lucide-react';
+import { Camera, MapPin, MessageCircle, Phone, QrCode, Share2, Star, UserPlus } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionButton, MiniAction } from './components/ActionButton';
 import { HoursCard, InfoCard, LinksCard, ServicesCard } from './components/Cards';
@@ -32,22 +32,20 @@ export default function App() {
       <ActionButton
         key="wa"
         variant="accent"
+        size="lg"
         icon={MessageCircle}
         label="WhatsApp"
-        hint="Fale conosco"
         href={whatsappUrl(contact.whatsapp, contact.whatsappMessage)}
         external
       />
     ),
-    pix && <ActionButton key="pix" variant="brand" icon={QrCode} label="Pix" hint="Pagar agora" href="#pix" />,
+    pix && <ActionButton key="pix" variant="brand" size="lg" icon={QrCode} label="Pix" href="#pix" />,
     address && location && (
-      <ActionButton key="map" icon={Navigation} label="Como chegar" hint={location.district && `Bairro ${location.district}`} href={directionsUrl(address, location.googlePlaceId)} external />
+      <ActionButton key="map" icon={MapPin} label="Como chegar" href={directionsUrl(address, location.googlePlaceId)} external />
     ),
-    contact.instagram && (
-      <ActionButton key="ig" icon={AtSign} label="Instagram" hint={`@${contact.instagram}`} href={instagramUrl(contact.instagram)} external />
-    ),
+    contact.instagram && <ActionButton key="ig" icon={Camera} label="Instagram" href={instagramUrl(contact.instagram)} external />,
     location?.googlePlaceId && (
-      <ActionButton key="review" icon={Star} label="Avaliar no Google" hint="Sua opinião ajuda" href={reviewUrl(location.googlePlaceId)} external />
+      <ActionButton key="review" icon={Star} label="Avaliar no Google" href={reviewUrl(location.googlePlaceId)} external />
     ),
   ].filter(Boolean);
 
@@ -70,11 +68,12 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto max-w-[480px] pb-8 md:pt-8">
+    // No computador, a página vira uma "tela de celular" com borda luminosa, como no mockup.
+    <div className="screen-bg mx-auto min-h-dvh max-w-[480px] pb-6 md:my-10 md:min-h-0 md:overflow-hidden md:rounded-[2.25rem] md:shadow-[0_0_70px_-14px_rgba(47,107,255,0.75)] md:ring-1 md:ring-sky-300/35">
       <Hero />
 
-      <main className="mt-4 space-y-4 px-4">
-        <nav aria-label="Ações principais" className="grid grid-cols-2 gap-3">
+      <main className="mt-5 space-y-3 px-4">
+        <nav aria-label="Ações principais" className="grid grid-cols-2 gap-2.5">
           {primary.map((button, i) => (
             <div key={i} className={primary.length % 2 === 1 && i === primary.length - 1 ? 'col-span-2' : ''}>
               {button}
@@ -84,7 +83,7 @@ export default function App() {
 
         {pix && <PixCard />}
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2.5">
           {(contact.phone || contact.whatsapp) && <MiniAction icon={Phone} label="Ligar" href={telUrl((contact.phone || contact.whatsapp)!)} />}
           <MiniAction
             icon={UserPlus}
@@ -103,9 +102,9 @@ export default function App() {
         <InfoCard />
       </main>
 
-      <footer className="mt-8 px-4 text-center text-xs text-slate-500">
+      <footer className="mx-6 mt-8 border-t border-sky-100/10 pt-5 text-center text-sm text-slate-400">
         Cartão digital por{' '}
-        <a href={profile.credit.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-300 hover:text-accent">
+        <a href={profile.credit.url} target="_blank" rel="noopener noreferrer" className="font-bold text-white hover:text-accent">
           {profile.credit.label}
         </a>
       </footer>

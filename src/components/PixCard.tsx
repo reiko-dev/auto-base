@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Copy, QrCode } from 'lucide-react';
+import { Check, Copy, ScanQrCode, Wallet } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { profile } from '../config/profile';
 import { formatPixKey, parsePix, resolvePixCode } from '../lib/pix';
@@ -46,48 +46,44 @@ export function PixCard() {
 
   return (
     <section id="pix" aria-labelledby="pix-title" className="card scroll-mt-4">
-      <div className="flex items-center gap-2">
-        <QrCode aria-hidden className="size-5 text-accent" />
-        <h2 id="pix-title" className="text-lg font-bold text-white">
-          Pague com Pix
-        </h2>
-      </div>
+      <h2 id="pix-title" className="flex items-center gap-3 border-b border-sky-100/10 pb-3 font-display text-lg font-bold text-white">
+        <Wallet aria-hidden className="size-6 text-slate-200" strokeWidth={1.6} />
+        Pague com Pix
+      </h2>
 
-      <dl className="mt-3 grid gap-2 text-sm">
-        <div className="flex flex-wrap justify-between gap-x-3">
-          <dt className="text-slate-400">Recebedor</dt>
-          <dd className="font-semibold text-white">{parsed.receiverName}</dd>
-        </div>
-        <div className="flex flex-wrap justify-between gap-x-3">
-          <dt className="text-slate-400">Chave ({KEY_LABEL[pix.keyType]})</dt>
-          <dd className="font-semibold text-white tabular-nums">{formatPixKey(pix.keyType, parsed.key)}</dd>
-        </div>
-        <div className="flex flex-wrap justify-between gap-x-3">
-          <dt className="text-slate-400">Valor</dt>
-          <dd className="font-semibold text-white">{parsed.amount ? `R$ ${parsed.amount.replace('.', ',')}` : 'você digita no app do banco'}</dd>
-        </div>
+      <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-2.5 gap-y-1 text-[13.5px]">
+        <dt className="text-slate-400">Recebedor:</dt>
+        <dd className="font-semibold text-white">{parsed.receiverName}</dd>
+        <dt className="text-slate-400">Chave ({KEY_LABEL[pix.keyType]}):</dt>
+        <dd className="font-semibold text-white tabular-nums">{formatPixKey(pix.keyType, parsed.key)}</dd>
+        {parsed.amount && (
+          <>
+            <dt className="text-slate-400">Valor:</dt>
+            <dd className="font-semibold text-white">R$ {parsed.amount.replace('.', ',')}</dd>
+          </>
+        )}
       </dl>
 
       <button
         type="button"
         onClick={copy}
-        className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-accent px-4 text-base font-bold text-on-accent shadow-[0_8px_28px_-10px_var(--accent)] transition active:scale-[0.98] hover:brightness-110"
+        className="mt-4 flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-accent px-4 text-base font-bold text-on-accent ring-1 ring-white/45 shadow-[0_0_28px_-6px_var(--accent)] transition active:scale-[0.98] hover:brightness-110"
       >
         {copied ? <Check aria-hidden className="size-5" /> : <Copy aria-hidden className="size-5" />}
         {copied ? 'Código copiado' : 'Copiar código Pix'}
       </button>
 
-      <p aria-live="polite" className="mt-2 min-h-5 text-sm text-slate-300">
+      <p aria-live="polite" className={`text-sm text-slate-300 ${copied ? 'mt-3' : ''}`}>
         {copied && (
           <>
             Agora abra o app do seu banco → <strong className="text-white">Pix</strong> →{' '}
-            <strong className="text-white">Pix Copia e Cola</strong> e cole o código.
+            <strong className="text-white">Pix Copia e Cola</strong>, cole o código e digite o valor.
           </>
         )}
       </p>
 
       {manual && (
-        <label className="mt-2 block text-sm text-slate-300">
+        <label className="mt-3 block text-sm text-slate-300">
           Não deu para copiar sozinho. Selecione o código abaixo e copie:
           <textarea
             ref={manualRef}
@@ -104,15 +100,15 @@ export function PixCard() {
         aria-expanded={qrOpen}
         aria-controls="pix-qr"
         onClick={() => setQrOpen((open) => !open)}
-        className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold text-slate-200 glass-button"
+        className="mt-2.5 flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl text-base font-semibold text-white ring-1 ring-sky-100/35 transition hover:bg-white/5 active:scale-[0.98]"
       >
+        <ScanQrCode aria-hidden className="size-5" strokeWidth={1.8} />
         {qrOpen ? 'Ocultar QR Code' : 'Mostrar QR Code'}
-        <ChevronDown aria-hidden className={`size-4 transition ${qrOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {qrOpen && (
-        <div id="pix-qr" className="mt-3 flex justify-center">
-          <div className="rounded-2xl bg-white p-3">
+        <div id="pix-qr" className="mt-4 flex justify-center">
+          <div className="rounded-2xl bg-white p-3 shadow-[0_0_30px_-8px_var(--accent)]">
             {qrSrc ? (
               <img src={qrSrc} alt={`QR Code Pix de ${profile.name}`} width={220} height={220} className="size-[220px]" />
             ) : (
@@ -122,7 +118,7 @@ export function PixCard() {
         </div>
       )}
 
-      <p className="mt-4 text-[13px] leading-snug text-slate-400">
+      <p className="mt-3 text-xs leading-snug text-slate-400">
         Antes de confirmar, veja se o app do banco mostra como recebedor <span className="text-slate-200">{parsed.receiverName}</span>.
       </p>
     </section>

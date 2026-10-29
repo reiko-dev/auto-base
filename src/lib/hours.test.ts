@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { profile } from '../config/profile';
-import { describeDay, formatTime, getOpenStatus } from './hours';
+import type { Weekday } from '../config/types';
+import { describeDay, formatTime, getOpenStatus, summarizeWeek } from './hours';
 
 const tz = 'America/Rio_Branco'; // UTC-5, sem horário de verão
 const hours = profile.hours!;
@@ -30,6 +31,28 @@ describe('getOpenStatus (Auto Base: dom–sex 7h40–18h, sábado a confirmar)',
   it('usa o fuso da loja, não o do visitante (23h UTC de quarta = 18h em Rio Branco)', () => {
     expect(getOpenStatus(hours, tz, at('2026-10-28T22:59:00Z')).state).toBe('open');
     expect(getOpenStatus(hours, tz, at('2026-10-28T23:00:00Z')).state).toBe('closed');
+  });
+});
+
+describe('resumo da semana', () => {
+  it('Auto Base: domingo a sexta + sábado', () => {
+    expect(summarizeWeek(hours).map((g) => `${g.label}: ${g.value}`)).toEqual([
+      'Domingo a sexta: 7h40 – 18h',
+      'Sábado: Consulte pelo WhatsApp',
+    ]);
+  });
+
+  it('comércio de segunda a sexta', () => {
+    const weekdays = { schedule: [{ days: [1, 2, 3, 4, 5] as Weekday[], open: '08:00', close: '18:00' }] };
+    expect(summarizeWeek(weekdays).map((g) => `${g.label}: ${g.value}`)).toEqual([
+      'Segunda a sexta: 8h – 18h',
+      'Sábado e domingo: Fechado',
+    ]);
+  });
+
+  it('todos os dias', () => {
+    const always = { schedule: [{ days: [0, 1, 2, 3, 4, 5, 6] as Weekday[], open: '06:00', close: '22:00' }] };
+    expect(summarizeWeek(always).map((g) => `${g.label}: ${g.value}`)).toEqual(['Todos os dias: 6h – 22h']);
   });
 });
 
